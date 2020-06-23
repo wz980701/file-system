@@ -9,6 +9,10 @@ module.exports = {
   entry: './src/app.tsx',
   target: 'electron-renderer',
   devtool: 'source-map',
+  alias: {
+    '@': path.resolve(__dirname, 'src'),
+    'components': path.resolve(__dirname, 'src/components')
+  },
   module: {
     rules: [
       {
