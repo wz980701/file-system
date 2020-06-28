@@ -74,3 +74,5 @@ class API extends Axios {
         return this.get('/common/rank/getHotRank', params, '获取热度排行榜失败');
     }
 }
+
+export default new API();

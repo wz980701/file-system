@@ -5,14 +5,15 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
     mainFields: ['main', 'module', 'browser'],
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      'components': path.resolve(__dirname, 'src/components'),
+      'helpers': path.resolve(__dirname, 'helpers')
+    }
   },
   entry: './src/app.tsx',
   target: 'electron-renderer',
   devtool: 'source-map',
-  alias: {
-    '@': path.resolve(__dirname, 'src'),
-    'components': path.resolve(__dirname, 'src/components')
-  },
   module: {
     rules: [
       {
@@ -29,7 +30,7 @@ module.exports = {
     historyApiFallback: true,
     compress: true,
     hot: true,
-    port: 4000,
+    port: 8080,
     publicPath: '/',
   },
   output: {
@@ -38,6 +39,9 @@ module.exports = {
     publicPath: './',
   },
   plugins: [
-    new HtmlWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      title: 'FileSystem',
+      template: './public/template.html'
+    }),
   ],
 };

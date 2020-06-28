@@ -48,11 +48,14 @@ export default class Axios {
             throw err;
         }
     }
-    async post (url: string, params: object, errTips: string, type = 'api'): Promise<object | undefined> {
+    async post (url: string, params: object, errTips: string, type = 'api'): Promise<object> {
         try {
             let result = await this.axios('post', url, params, type);
             if (result && result.code === 2000) {
-                return result;
+                if (result.data) 
+                    return result.data;
+                else 
+                    return result.message;
             }
             let err: ErrorTips = {
                 tip: errTips,

@@ -4,9 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import Home from './pages/Home/index';
 import Login from './pages/Login/index';
-
-const mainElement = document.createElement('div');
-document.body.appendChild(mainElement);
+import Regist from './pages/Regist/index';
 
 const App = () => {
   return (
@@ -14,9 +12,10 @@ const App = () => {
       <Switch>
         <Route exact path="/" component={Home} />
         <Route path="/login" component={Login} />
+        <Route path="/regist" component={Regist} />
       </Switch>
     </Router>
   )
 }
 
-ReactDom.render(<App />, mainElement);
+ReactDom.render(<App />, document.getElementById('root'));

@@ -14,5 +14,11 @@
     "outDir": "./dist",
     "strict": true ,
     "esModuleInterop": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"],
+      "components/*": ["src/components/*"],
+      "helpers/*": ["helpers/*"]
+    }
   }
 }

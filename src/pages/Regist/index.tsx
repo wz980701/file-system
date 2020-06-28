@@ -14,18 +14,18 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const Login = () => {
+const Regist = () => {
     const classes = useStyles();
     return (
         <Grid container justify="center" alignItems="center" className={classes.root}>
             <Grid item xs={8}>
-                <InputGroups type="login" />
+                <InputGroups type="regist" />
                 <Grid item className={classes.link}>
-                    <Link href='/regist'>注册</Link>
+                    <Link href='/login'>登录</Link>
                 </Grid>
             </Grid>
         </Grid>
     )
 }
 
-export default Login;
+export default Regist;
