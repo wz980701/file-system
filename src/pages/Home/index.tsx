@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -7,9 +7,12 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import Divider from '@material-ui/core/Divider';
+import Avatar from '@material-ui/core/Avatar';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import Store from 'electron-store';
 
 const drawerWidth = 240;
 
@@ -48,7 +51,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
     ...theme.mixins.toolbar,
     justifyContent: 'flex-end',
   },
@@ -69,7 +71,19 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: 0,
     marginTop: theme.spacing(3)
   },
+  userHeader: {
+    display: 'flex',
+    width: '100%',
+    alignItems: 'center',
+    paddingLeft: theme.spacing(2)
+  },
+  userName: {
+    marginLeft: theme.spacing(3),
+    fontSize: 18
+  }
 }));
+
+const store = new Store();
 
 export default function PersistentDrawerLeft() {
   const classes = useStyles();
@@ -83,6 +97,10 @@ export default function PersistentDrawerLeft() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  useEffect(() => {
+    console.log(store.get('userInfo'));
+  })
 
   return (
     <div className={classes.root}>
@@ -118,11 +136,15 @@ export default function PersistentDrawerLeft() {
         }}
       >
         <div className={classes.drawerHeader}>
+          <div className={classes.userHeader}>
+            <Avatar alt="Avatar" src="" />
+            <p className={classes.userName}>jeremy</p>
+          </div>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </div>
-        
+        <Divider />
       </Drawer>
       <main
         className={clsx(classes.content, {

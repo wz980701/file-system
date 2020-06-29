@@ -23,6 +23,10 @@ module.exports = {
           loader: 'babel-loader',
         },
       },
+      {
+        test: /\.(png|jpg|gif|svg)$/,
+        use: ['file-loader']
+      }
     ],
   },
   devServer: {
@@ -36,7 +40,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, '../dist/renderer'),
     filename: 'js/[name].js',
-    publicPath: './',
+    publicPath: '/',
   },
   plugins: [
     new HtmlWebpackPlugin({

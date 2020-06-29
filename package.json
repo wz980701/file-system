@@ -7,6 +7,7 @@
     "dev:electron": "cross-env NODE_ENV=development webpack --config webpack.electron.config.js --mode development && electron .",
     "dev:react": "cross-env NODE_ENV=development webpack-dev-server --config webpack.react.config.js --mode development"
   },
+  "homepage": ".",
   "keywords": [],
   "author": "elisealcala",
   "license": "ISC",
@@ -26,6 +27,7 @@
     "css-loader": "^3.6.0",
     "electron": "^8.2.2",
     "electron-store": "^5.2.0",
+    "file-loader": "^6.0.0",
     "html-webpack-plugin": "^4.2.0",
     "react-router": "^5.2.0",
     "react-router-config": "^5.1.1",

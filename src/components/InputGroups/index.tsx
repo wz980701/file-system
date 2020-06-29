@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -11,6 +11,8 @@ import { useHistory } from 'react-router-dom';
 import Toast from 'components/Toast/index';
 
 import Store from 'electron-store';
+
+import useEntered from '../../hooks/useKeyEnter';
 
 const store = new Store();
 
@@ -39,6 +41,7 @@ type propInfo = {
 const InputGroups = ({ type }: propInfo) => {
     const classes = useStyles();
     const history = useHistory();
+    const isEnter = useEntered();
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [dialogInfo, setDialogInfo] = useState<object>({
@@ -54,6 +57,12 @@ const InputGroups = ({ type }: propInfo) => {
             getRegist();
         }
     }
+
+    useEffect(() => {
+        if (isEnter) {
+            handleClick();
+        }
+    }, [isEnter]);
 
     const getLogin = () => {
         const formdata = _fun.getFormdata({
