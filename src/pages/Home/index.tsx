@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -13,6 +13,10 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Store from 'electron-store';
+import FileSearch from 'components/FileSearch/index';
+import NavSideList from 'components/NavSideList/index';
+import Toast from 'components/Toast/index';
+import api from 'helpers/api';
 
 const drawerWidth = 240;
 
@@ -80,6 +84,13 @@ const useStyles = makeStyles((theme) => ({
   userName: {
     marginLeft: theme.spacing(3),
     fontSize: 18
+  },
+  searchBox: {
+    width: '100%',
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    display: 'flex',
+    justifyContent: 'center'
   }
 }));
 
@@ -88,7 +99,13 @@ const store = new Store();
 export default function PersistentDrawerLeft() {
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = useState<boolean>(true);
+  const [list, setList] = useState<any[]>([]);
+  const [dialogInfo, setDialogInfo] = useState<object>({
+      open: false,
+      text: '',
+      type: '' 
+  });
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -99,8 +116,47 @@ export default function PersistentDrawerLeft() {
   };
 
   useEffect(() => {
-    console.log(store.get('userInfo'));
-  })
+    initData();
+  }, []);
+
+  const initData = () => {
+    api.getFileCatalogList().then((res) => {
+      let list = [...res.fileCatalogList];
+      for (let index in list) {
+        const item = list[index];
+        const id = item.fileCatalogId;
+        api.getFileList({
+          params: {
+            fileCatalogId: id,
+            page: 1,
+            limit: 100
+          }
+        }).then((res) => {
+          const fileList = res.fileUserViewList ? res.fileUserViewList : [];
+          list[index] = {...item, fileList};
+        }).catch((err) => {
+          console.log(err);
+          setDialogInfo({
+            open: true,
+            text: '获取文件列表数据失败',
+            type: 'error'
+          });
+        });
+        setList(list);
+      }
+    }).catch((err) => {
+      console.log(err);
+      setDialogInfo({
+        open: true,
+        text: '获取文档列表数据失败',
+        type: 'error'
+      });
+    })
+  }
+
+  const onSearch = (val: string) => {
+    console.log(val);
+  }
 
   return (
     <div className={classes.root}>
@@ -145,6 +201,11 @@ export default function PersistentDrawerLeft() {
           </IconButton>
         </div>
         <Divider />
+        <div className={classes.searchBox}>
+          <FileSearch handleSearch={onSearch} />
+        </div>
+        <Divider />
+        <NavSideList list={list} />
       </Drawer>
       <main
         className={clsx(classes.content, {
@@ -153,6 +214,7 @@ export default function PersistentDrawerLeft() {
       >
         didi
       </main>
+      <Toast dialogInfo={dialogInfo} handleClose={ () => { setDialogInfo({...dialogInfo, open: false}) } } />
     </div>
   );
 }

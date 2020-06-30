@@ -6,7 +6,6 @@ import { makeStyles } from '@material-ui/core';
 import api from 'helpers/api';
 import _fun from 'helpers/fun';
 import { ipcRenderer } from 'electron';
-import { useHistory } from 'react-router-dom';
 
 import Toast from 'components/Toast/index';
 
@@ -34,13 +33,12 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-type propInfo = {
+interface propInfo {
     type: string
 }
 
 const InputGroups = ({ type }: propInfo) => {
     const classes = useStyles();
-    const history = useHistory();
     const isEnter = useEntered();
     const [username, setUsername] = useState<string>('');
     const [password, setPassword] = useState<string>('');

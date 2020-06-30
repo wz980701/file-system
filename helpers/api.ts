@@ -26,7 +26,7 @@ class API extends Axios {
         return this.get('/common/file/getFileInfo', params, '获取文件详情信息失败', 'file');
     }
     async getFileList (params = {}) {
-        return this.get('/common/file/getFileList', params, '获取文件列表失败', 'file');
+        return this.get('/common/file/getFileList', params, '获取文件列表失败');
     }
     async searchFile (params = {}) {
         return this.get('/common/file/searchFile', params, '搜索文件失败', 'file');

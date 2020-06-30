@@ -7,8 +7,8 @@ let mainWindow: Electron.BrowserWindow | null;
 
 function createWindow() {
   if (process.env.NODE_ENV === 'development') {
-    mainWindow = new CommonWindow('/login', { width: 800, height: 600 });
-    // mainWindow = new CommonWindow('/');
+    // mainWindow = new CommonWindow('/login', { width: 800, height: 600 });
+    mainWindow = new CommonWindow('/');
   } else {
     mainWindow = new CommonWindow(url.format({
         pathname: path.join(__dirname, '../index.html'),
