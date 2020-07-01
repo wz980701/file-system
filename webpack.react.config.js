@@ -8,7 +8,8 @@ module.exports = {
     alias: {
       '@': path.resolve(__dirname, 'src'),
       'components': path.resolve(__dirname, 'src/components'),
-      'helpers': path.resolve(__dirname, 'helpers')
+      'helpers': path.resolve(__dirname, 'helpers'),
+      'env': path.resolve(__dirname, 'env')
     }
   },
   entry: './src/app.tsx',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, KeyboardEvent } from 'react';
 
 const useKeyEnter = () => {
     const [keyEntered, setKeyEntered] = useState<boolean>(false);

@@ -3,6 +3,8 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles, Collapse } from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import Drawer from '@material-ui/core/Drawer';
+import IconButton from '@material-ui/core/IconButton';
 import ListIcon from '@material-ui/icons/ListOutlined';
 import FileIcon from '@material-ui/icons/FileCopyOutlined';
 import ExpandMore from '@material-ui/icons/ExpandMore';
@@ -21,6 +23,11 @@ interface FileCatalog {
 }
 
 const useStyles = makeStyles((theme) => ({
+    root: {
+        marginTop: 140,
+        marginBottom: 70,
+        overflow: 'auto'
+    },
     item: {
         wordWrap: 'break-word',
         wordBreak: 'break-all',
@@ -41,24 +48,24 @@ const NavSideList = ({ list }: PropsInfo) => {
     }
 
     return (
-        <Grid container>
+        <Grid container className={classes.root}>
             <Grid xs={12} item>
                 <List>
                     {list.map((catalogItem, catalogIndex) => (
                         <>
                             <ListItem button key={catalogIndex} onClick={(e) => { handleClick(e, catalogIndex); }}>
                                 <ListItemIcon>
-                                    <ListIcon />
+                                    <ListIcon fontSize="small" />
                                 </ListItemIcon>
-                                <ListItemText primary={catalogItem.fileCatalogName} />
-                                { opens[catalogIndex] ? <ExpandLess /> : <ExpandMore /> }
+                                <ListItemText primary={catalogItem.fileCatalogName} className={classes.item} />
+                                { opens[catalogIndex] ? <ExpandLess fontSize="small" /> : <ExpandMore fontSize="small" /> }
                             </ListItem>
                             <Collapse in={opens[catalogIndex]}>
                                 <List component="div">
                                     {catalogItem.fileList && catalogItem.fileList.map((fileItem, fileIndex) => (
-                                        <ListItem button key={fileIndex}>
+                                        <ListItem button key={fileIndex} data-id={fileItem.fileId}>
                                             <ListItemIcon>
-                                                <FileIcon />
+                                                <FileIcon fontSize="small" />
                                             </ListItemIcon>
                                             <ListItemText primary={fileItem.fileName} className={classes.item} />
                                         </ListItem>

@@ -18,7 +18,8 @@
     "paths": {
       "@/*": ["src/*"],
       "components/*": ["src/components/*"],
-      "helpers/*": ["helpers/*"]
+      "helpers/*": ["helpers/*"],
+      "env/*": ["env/*"]
     }
   }
 }

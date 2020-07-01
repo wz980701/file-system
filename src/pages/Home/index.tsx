@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, MouseEvent} from 'react';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -12,11 +12,14 @@ import Avatar from '@material-ui/core/Avatar';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import ExpandMore from '@material-ui/icons/ExpandMore';
 import Store from 'electron-store';
 import FileSearch from 'components/FileSearch/index';
 import NavSideList from 'components/NavSideList/index';
 import Toast from 'components/Toast/index';
 import api from 'helpers/api';
+import { fileBaseURL } from 'env/config';
+import BottomMenu from '@/components/BottomMenu';
 
 const drawerWidth = 240;
 
@@ -47,9 +50,16 @@ const useStyles = makeStyles((theme) => ({
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
+    position: 'relative'
   },
   drawerPaper: {
     width: drawerWidth,
+  },
+  drawerHeaderBox: {
+    position: 'absolute',
+    width: '100%',
+    top: 0,
+    zIndex: 999
   },
   drawerHeader: {
     display: 'flex',
@@ -99,7 +109,9 @@ const store = new Store();
 export default function PersistentDrawerLeft() {
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = useState<boolean>(true);
+  const { userName, userPortrait } = store.get('userInfo');
+  const [open, setOpen] = useState<boolean>(true); // 侧栏显示
+  const [toggle, setToggle] = useState<boolean>(false); // 搜索，收藏时的列表显示
   const [list, setList] = useState<any[]>([]);
   const [dialogInfo, setDialogInfo] = useState<object>({
       open: false,
@@ -110,6 +122,38 @@ export default function PersistentDrawerLeft() {
   const handleDrawerOpen = () => {
     setOpen(true);
   };
+
+  const onToggleClose = () => {
+    setToggle(false);
+  }
+
+  const onBottomMenuClick = (e: MouseEvent<HTMLDivElement>, type: string) => {
+    switch (type) {
+      case 'upload':
+        showUploadList();
+        break;
+      case 'collect':
+        showCollectList();
+        break;
+      case 'add':
+        AddCatalog();
+        break;
+      default:
+        return;
+    }
+  }
+
+  const showUploadList = () => {
+    console.log('upload');
+  }
+
+  const showCollectList = () => {
+    console.log('collect');
+  }
+
+  const AddCatalog = () => {
+    console.log('add');
+  }
 
   const handleDrawerClose = () => {
     setOpen(false);
@@ -156,6 +200,7 @@ export default function PersistentDrawerLeft() {
 
   const onSearch = (val: string) => {
     console.log(val);
+    setToggle(true);
   }
 
   return (
@@ -191,28 +236,42 @@ export default function PersistentDrawerLeft() {
           paper: classes.drawerPaper,
         }}
       >
-        <div className={classes.drawerHeader}>
-          <div className={classes.userHeader}>
-            <Avatar alt="Avatar" src="" />
-            <p className={classes.userName}>jeremy</p>
+        <div className={classes.drawerHeaderBox}>
+          <div className={classes.drawerHeader}>
+            <div className={classes.userHeader}>
+              <Avatar alt="Avatar" src={`${fileBaseURL}${userPortrait}`} />
+              <p className={classes.userName}>{userName}</p>
+            </div>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
           </div>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
+          <Divider />
+          <div className={classes.searchBox}>
+            <FileSearch handleSearch={onSearch} />
+          </div>
+          <Divider />
         </div>
-        <Divider />
-        <div className={classes.searchBox}>
-          <FileSearch handleSearch={onSearch} />
-        </div>
-        <Divider />
         <NavSideList list={list} />
+        <BottomMenu handleClick={onBottomMenuClick} />
+        <Drawer 
+          anchor="bottom"
+          variant="persistent"
+          open={toggle}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+        >
+          <IconButton onClick={onToggleClose}>
+              <ExpandMore />
+          </IconButton>
+        </Drawer>
       </Drawer>
       <main
         className={clsx(classes.content, {
           [classes.contentShift]: open,
         })}
       >
-        didi
       </main>
       <Toast dialogInfo={dialogInfo} handleClose={ () => { setDialogInfo({...dialogInfo, open: false}) } } />
     </div>
