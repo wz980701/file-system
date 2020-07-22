@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core';
 import api from 'helpers/api';
-import _fun from 'helpers/fun';
+import { getFormdata } from 'helpers/fun';
 import { ipcRenderer } from 'electron';
 
 import Toast from 'components/Toast/index';
@@ -63,7 +63,7 @@ const InputGroups = ({ type }: propInfo) => {
     }, [isEnter]);
 
     const getLogin = () => {
-        const formdata = _fun.getFormdata({
+        const formdata = getFormdata({
             'userName': username,
             'userPassword': password
         });
@@ -90,7 +90,7 @@ const InputGroups = ({ type }: propInfo) => {
     }
 
     const getRegist = () => {
-        const formdata = _fun.getFormdata({
+        const formdata = getFormdata({
             'userName': username,
             'userPassword': password
         });

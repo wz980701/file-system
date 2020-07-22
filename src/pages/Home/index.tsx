@@ -12,14 +12,16 @@ import Avatar from '@material-ui/core/Avatar';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ExpandMore from '@material-ui/icons/ExpandMore';
 import Store from 'electron-store';
 import FileSearch from 'components/FileSearch/index';
 import NavSideList from 'components/NavSideList/index';
 import Toast from 'components/Toast/index';
+import BottomMenu from 'components/BottomMenu/index';
+import ToggleList from 'components/ToggleList/index';
+import MainContent from '@/components/MainContent/MainContent';
 import api from 'helpers/api';
 import { fileBaseURL } from 'env/config';
-import BottomMenu from '@/components/BottomMenu';
+import { isObjEmpty } from 'helpers/fun';
 
 const drawerWidth = 240;
 
@@ -76,6 +78,7 @@ const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
     marginLeft: -drawerWidth,
+    textAlign: 'center'
   },
   contentShift: {
     transition: theme.transitions.create('margin', {
@@ -101,6 +104,13 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
     display: 'flex',
     justifyContent: 'center'
+  },
+  contentHeader: {
+    marginTop: '30%',
+    fontSize: 40,
+    letterSpacing: theme.spacing(1),
+    color: '#ccc',
+    opacity: 0.6
   }
 }));
 
@@ -112,7 +122,9 @@ export default function PersistentDrawerLeft() {
   const { userName, userPortrait } = store.get('userInfo');
   const [open, setOpen] = useState<boolean>(true); // 侧栏显示
   const [toggle, setToggle] = useState<boolean>(false); // 搜索，收藏时的列表显示
-  const [list, setList] = useState<any[]>([]);
+  const [catalogList, setCatalogList] = useState<any[]>([]);
+  const [toggleList, setToggleList] = useState<any[]>([]);
+  const [fileInfo, setFileInfo] = useState<any>({});
   const [dialogInfo, setDialogInfo] = useState<object>({
       open: false,
       text: '',
@@ -144,11 +156,52 @@ export default function PersistentDrawerLeft() {
   }
 
   const showUploadList = () => {
-    console.log('upload');
+    api.getUserFileList({
+      params: {
+        page: 1,
+        limit: 100
+      }
+    }).then((res: any) => {
+      const list = [...res.fileUserViewList];
+      if (list.length > 0) {
+        setToggleList(list);
+        setToggle(toggle ? false : true);
+      } else {
+        return Promise.reject('上传文件为空');
+      }
+    }).catch((err) => {
+      console.log(err);
+      setDialogInfo({
+        open: true,
+        text: '上传文件为空',
+        type: 'info'
+      });
+    })
   }
 
   const showCollectList = () => {
-    console.log('collect');
+    api.selectCollection({
+      params: {
+        page: 1,
+        limit: 100
+      }
+    }).then((res: any) => {
+      console.log(res);
+      const list = [...res.fileCollectionViewList];
+      if (list.length > 0) {
+        setToggleList(list);
+        setToggle(toggle ? false : true);
+      } else {
+        return Promise.reject('收藏文件为空');
+      }
+    }).catch((err) => {
+      console.log(err);
+      setDialogInfo({
+        open: true,
+        text: '收藏文件为空',
+        type: 'info'
+      });
+    })
   }
 
   const AddCatalog = () => {
@@ -186,7 +239,7 @@ export default function PersistentDrawerLeft() {
             type: 'error'
           });
         });
-        setList(list);
+        setCatalogList(list);
       }
     }).catch((err) => {
       console.log(err);
@@ -199,9 +252,57 @@ export default function PersistentDrawerLeft() {
   }
 
   const onSearch = (val: string) => {
-    console.log(val);
-    setToggle(true);
+    api.searchFile({
+      params: {
+        fileName: val,
+        fileCatalogId: 0,
+        page: 1,
+        limit: 100
+      }
+    }).then((res: any) => {
+      const list = [...res.fileUserViewList];
+      if (list.length > 0) {
+        setToggleList(list);
+        setToggle(true);
+      } else {
+        return Promise.reject('搜索不到文件');
+      }
+    }).catch((err) => {
+      console.log(err);
+      setDialogInfo({
+        open: true,
+        text: '搜索不到文件',
+        type: 'info'
+      });
+    })
   }
+
+  const getFileInfo = (fileId: number) => {
+      const fileInfo = api.getFileInfo({
+          params: {
+              fileId
+          }
+      });
+      const comment = api.selectFileCommentList({
+          params: {
+            fileId,
+            page: 1,
+            limit: 100
+          }
+      });
+      Promise.all([fileInfo, comment]).then(function (res) {
+        const commentList = typeof res[1] === 'object' ? res[1].fileUserCommentViewList : [];
+        setFileInfo({...res[0], commentList});
+      }).catch(err => {
+        console.log(err);
+        setDialogInfo({
+          open: true,
+          text: '获取文件信息失败',
+          type: 'error'
+        });
+      });
+  }
+
 
   return (
     <div className={classes.root}>
@@ -223,7 +324,7 @@ export default function PersistentDrawerLeft() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            Persistent drawer
+            { isObjEmpty(fileInfo) ? 'File System' : fileInfo.fileName }
           </Typography>
         </Toolbar>
       </AppBar>
@@ -239,7 +340,7 @@ export default function PersistentDrawerLeft() {
         <div className={classes.drawerHeaderBox}>
           <div className={classes.drawerHeader}>
             <div className={classes.userHeader}>
-              <Avatar alt="Avatar" src={`${fileBaseURL}${userPortrait}`} />
+              <Avatar alt="Avatar" src={fileBaseURL + userPortrait} />
               <p className={classes.userName}>{userName}</p>
             </div>
             <IconButton onClick={handleDrawerClose}>
@@ -248,30 +349,24 @@ export default function PersistentDrawerLeft() {
           </div>
           <Divider />
           <div className={classes.searchBox}>
-            <FileSearch handleSearch={onSearch} />
+            <FileSearch handleSearch={onSearch} handleToggleClose={onToggleClose} />
           </div>
           <Divider />
         </div>
-        <NavSideList list={list} />
+        {
+          toggle ? <ToggleList list={toggleList} handleItemClick={getFileInfo} /> :
+            <NavSideList list={catalogList} handleItemClick={getFileInfo} />
+        }
         <BottomMenu handleClick={onBottomMenuClick} />
-        <Drawer 
-          anchor="bottom"
-          variant="persistent"
-          open={toggle}
-          classes={{
-            paper: classes.drawerPaper,
-          }}
-        >
-          <IconButton onClick={onToggleClose}>
-              <ExpandMore />
-          </IconButton>
-        </Drawer>
       </Drawer>
       <main
         className={clsx(classes.content, {
           [classes.contentShift]: open,
         })}
       >
+        {
+          isObjEmpty(fileInfo) ? <h1 className={classes.contentHeader}>Welcome to Jeremy's</h1> : <MainContent fileInfo={fileInfo} />
+        }
       </main>
       <Toast dialogInfo={dialogInfo} handleClose={ () => { setDialogInfo({...dialogInfo, open: false}) } } />
     </div>

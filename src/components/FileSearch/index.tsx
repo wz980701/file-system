@@ -11,9 +11,10 @@ const useStyles = makeStyles((theme) => ({
 
 interface PropsInfo {
     handleSearch: (val: string) => void
+    handleToggleClose: () => void
 }
 
-const FileSearch = ({ handleSearch }: PropsInfo) => {
+const FileSearch = ({ handleSearch, handleToggleClose }: PropsInfo) => {
     const classes = useStyles();
     const [textVal, setTextVal] = useState<string>('');
     const [isActive, setActive] = useState<boolean>(false);
@@ -35,8 +36,10 @@ const FileSearch = ({ handleSearch }: PropsInfo) => {
     useEffect(() => {
         if (isActive && isEnter && textVal.length > 0) {
             handleSearch(textVal);
+        } else {
+            handleToggleClose();
         }
-    }, [isActive, isEnter]);
+    }, [isActive, isEnter, textVal.length]);
 
     return (
         <TextField 

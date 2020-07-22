@@ -19,7 +19,9 @@ const useStyles = makeStyles((theme) => ({
     },
     item: {
         display: 'flex',
-        flexDirection: 'column'
+        width: '100%',
+        flexDirection: 'column',
+        paddingTop: theme.spacing(1)
     }
 }));
 
