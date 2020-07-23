@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, MouseEvent } from 'react';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
@@ -6,12 +6,17 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import DownloadIcon from '@material-ui/icons/GetApp';
 import { makeStyles } from '@material-ui/core/styles';
-import { green, blue, grey } from '@material-ui/core/colors';
+import { green, blue, grey, pink, orange } from '@material-ui/core/colors';
 import { fileBaseURL } from 'env/config';
 import { timestampToTime } from 'helpers/fun';
 
+import Store from 'electron-store';
+
+const store = new Store();
+
 interface PropsInfo {
-    fileInfo: any
+    fileInfo: any,
+    onContentEvent: (type: string, val: any) => void
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -72,15 +77,29 @@ const useStyles = makeStyles((theme) => ({
         }
     },
     avatar: {
-        width: 70,
-        height: 70
+        width: 80,
+        height: 80
     }
 }));
 
-const MainContent = ({ fileInfo }: PropsInfo) => {
+const MainContent = ({ fileInfo, onContentEvent }: PropsInfo) => {
     const classes = useStyles();
 
     const [commentText, setCommentText] = useState<string>('');
+
+    const sendComment = (e: MouseEvent<HTMLButtonElement>) => {
+        onContentEvent('sendComment', commentText);
+        setCommentText('');
+    }
+
+    const judgeUser = (commentName: string) => {
+        const userName = store.get('userInfo').userName;
+        return userName === commentName;
+    }
+
+    useEffect(() => {
+        judgeUser('xixi');
+    })
 
     return (
         <Container className={classes.root}>
@@ -94,8 +113,20 @@ const MainContent = ({ fileInfo }: PropsInfo) => {
                         <p className={classes.userName}>{fileInfo.userName}</p>
                     </div>
                     <div className={classes.buttonGroups}>
-                        <Button color="primary" size="small">已收藏</Button>
-                        <Button color="secondary" size="small">点赞1</Button>
+                        <Button 
+                            style={{ color: fileInfo.fileCollectionId ? pink[500] : grey[500] }} 
+                            size="small"
+                            onClick={e => {fileInfo.fileCollectionId ? onContentEvent('cancelCollect', fileInfo.fileCollectionId) : onContentEvent('collect', fileInfo.fileId)}}
+                        >
+                            { fileInfo.fileCollectionId ? '已收藏' : '未收藏'}
+                        </Button>
+                        <Button 
+                            style={{ color: fileInfo.fileLikeId ? orange[300] : grey[500] }} 
+                            size="small"
+                            onClick={e => {fileInfo.fileLikeId ? onContentEvent('cancelLike', fileInfo.fileLikeId) : onContentEvent('like', fileInfo.fileId)}}
+                        >
+                            点赞{fileInfo.likeAmount}
+                        </Button>
                     </div>
                     <p className={classes.desc}>{fileInfo.fileBriefDescription}</p>
                     <Button
@@ -121,6 +152,7 @@ const MainContent = ({ fileInfo }: PropsInfo) => {
                         <Button
                             size="small"
                             style={{ color: '#fff', backgroundColor: blue[500], marginLeft: 20 }}
+                            onClick={sendComment}
                         >
                             发布
                         </Button>
@@ -137,11 +169,16 @@ const MainContent = ({ fileInfo }: PropsInfo) => {
                                             <p>{commentItem.commentContent}</p>
                                             <p style={{color: grey[400]}}>{timestampToTime(commentItem.commentTime)}</p>
                                         </div>
-                                        <Button 
-                                            color="primary" 
-                                            size="small"
-                                            style={{position: 'absolute', right: 20, bottom: 20}}
-                                        >删除</Button>
+                                        {
+                                            judgeUser(commentItem.userName) && (
+                                                <Button
+                                                    color="primary"
+                                                    size="small"
+                                                    style={{position: 'absolute', right: 0, bottom: 0}}
+                                                    onClick={e => {onContentEvent('delComment', commentItem.fileCommentId)}}
+                                                >删除</Button>
+                                            )
+                                        }
                                     </div>
                                 ))
                             }

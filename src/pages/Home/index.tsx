@@ -21,7 +21,7 @@ import ToggleList from 'components/ToggleList/index';
 import MainContent from '@/components/MainContent/MainContent';
 import api from 'helpers/api';
 import { fileBaseURL } from 'env/config';
-import { isObjEmpty } from 'helpers/fun';
+import { isObjEmpty, getFormdata } from 'helpers/fun';
 
 const drawerWidth = 240;
 
@@ -283,16 +283,9 @@ export default function PersistentDrawerLeft() {
               fileId
           }
       });
-      const comment = api.selectFileCommentList({
-          params: {
-            fileId,
-            page: 1,
-            limit: 100
-          }
-      });
-      Promise.all([fileInfo, comment]).then(function (res) {
-        const commentList = typeof res[1] === 'object' ? res[1].fileUserCommentViewList : [];
-        setFileInfo({...res[0], commentList});
+      const commentList = getCommentList(fileId);
+      Promise.all([fileInfo, commentList]).then((res) => {
+        setFileInfo({...res[0], commentList: res[1]});
       }).catch(err => {
         console.log(err);
         setDialogInfo({
@@ -301,6 +294,153 @@ export default function PersistentDrawerLeft() {
           type: 'error'
         });
       });
+  }
+
+  const getCommentList = (fileId: number) => {
+    return api.selectFileCommentList({
+        params: {
+          fileId,
+          page: 1,
+          limit: 100
+        }
+    }).then(res => {
+      return typeof res === 'object' ? res.fileUserCommentViewList : [];
+    }).catch(err => {
+      console.log(err);
+      setDialogInfo({
+        open: true,
+        text: '获取文件评论失败',
+        type: 'error'
+      });
+    })
+  }
+
+  const handleContentEvent = (type: string, val: any) => { // 捕获文件详情页事件
+    switch (type) {
+      case 'like':
+        setFileLike(val); // 文件点赞
+        break;
+      case 'collect':
+        setFileCollect(val); // 文件收藏
+        break;
+      case 'cancelLike':
+        cancelFileLike(val); // 取消文件点赞
+        break;
+      case 'cancelCollect':
+        cancelFileCollect(val); // 取消文件收藏
+        break;
+      case 'sendComment':
+        sendComment(val); // 发布评论
+        break;
+      case 'delComment':
+        delComment(val); // 删除评论
+        break;
+      default:
+        return;
+    }
+  }
+
+  const setFileLike = (fileId: number) => {
+    api.likeFile({
+      params: {
+        fileId
+      }
+    }).then(res => {
+      getFileInfo(fileInfo.fileId);
+    }).catch(err => {
+      console.log(err);
+      setDialogInfo({
+        open: true,
+        text: '点赞失败',
+        type: 'error'
+      });
+    })
+  }
+
+  const setFileCollect = (fileId: number) => {
+    api.collectFile({
+      params: {
+        fileId
+      }
+    }).then(res => {
+      getFileInfo(fileInfo.fileId);
+    }).catch(err => {
+      console.log(err);
+      setDialogInfo({
+        open: true,
+        text: '收藏失败',
+        type: 'error'
+      });
+    })
+  }
+
+  const cancelFileLike = (fileLikeId: number) => {
+    api.removeLikeFile({
+      params: {
+        fileLikeId
+      }
+    }).then(res => {
+      getFileInfo(fileInfo.fileId);
+    }).catch(err => {
+      console.log(err);
+      setDialogInfo({
+        open: true,
+        text: '取消点赞失败',
+        type: 'error'
+      });
+    })
+  }
+
+  const cancelFileCollect = (fileCollectionId: number) => {
+    api.removeCollection({
+      params: {
+        fileCollectionId
+      }
+    }).then(res => {
+      getFileInfo(fileInfo.fileId);
+    }).catch(err => {
+      console.log(err);
+      setDialogInfo({
+        open: true,
+        text: '取消收藏失败',
+        type: 'error'
+      });
+    })
+  }
+
+  const sendComment = (commentContent: string) => {
+    api.addFileComment({
+      data: getFormdata({
+          fileId: fileInfo.fileId,
+          commentContent
+      })
+    }).then(res => {
+      getFileInfo(fileInfo.fileId);
+    }).catch(err => {
+      console.log(err);
+      setDialogInfo({
+        open: true,
+        text: '发布评论失败,不能低于5个字喔',
+        type: 'error'
+      });
+    })
+  }
+
+  const delComment = (fileCommentId: number) => {
+    api.deleteFileComment({
+      params: {
+        fileCommentId
+      }
+    }).then(res => {
+      getFileInfo(fileInfo.fileId);
+    }).catch(err => {
+      console.log(err);
+      setDialogInfo({
+        open: true,
+        text: '删除评论失败',
+        type: 'error'
+      });
+    })
   }
 
 
@@ -365,7 +505,8 @@ export default function PersistentDrawerLeft() {
         })}
       >
         {
-          isObjEmpty(fileInfo) ? <h1 className={classes.contentHeader}>Welcome to Jeremy's</h1> : <MainContent fileInfo={fileInfo} />
+          isObjEmpty(fileInfo) ? <h1 className={classes.contentHeader}>Welcome to Jeremy's</h1> : 
+            <MainContent fileInfo={fileInfo} onContentEvent={handleContentEvent} />
         }
       </main>
       <Toast dialogInfo={dialogInfo} handleClose={ () => { setDialogInfo({...dialogInfo, open: false}) } } />
