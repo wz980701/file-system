@@ -20,6 +20,7 @@ import BottomMenu from 'components/BottomMenu/index';
 import ToggleList from 'components/ToggleList/index';
 import MainContent from '@/components/MainContent/MainContent';
 import api from 'helpers/api';
+import useDocumentTitle from '../../hooks/useDocumentTitle';
 import { fileBaseURL } from 'env/config';
 import { isObjEmpty, getFormdata } from 'helpers/fun';
 
@@ -131,6 +132,8 @@ export default function PersistentDrawerLeft() {
       type: '' 
   });
 
+  useDocumentTitle('主页');
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -146,9 +149,6 @@ export default function PersistentDrawerLeft() {
         break;
       case 'collect':
         showCollectList();
-        break;
-      case 'add':
-        AddCatalog();
         break;
       default:
         return;
@@ -202,10 +202,6 @@ export default function PersistentDrawerLeft() {
         type: 'info'
       });
     })
-  }
-
-  const AddCatalog = () => {
-    console.log('add');
   }
 
   const handleDrawerClose = () => {
@@ -443,7 +439,6 @@ export default function PersistentDrawerLeft() {
     })
   }
 
-
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -495,7 +490,10 @@ export default function PersistentDrawerLeft() {
         </div>
         {
           toggle ? <ToggleList list={toggleList} handleItemClick={getFileInfo} /> :
-            <NavSideList list={catalogList} handleItemClick={getFileInfo} />
+            <NavSideList 
+              list={catalogList} 
+              handleItemClick={getFileInfo}
+            />
         }
         <BottomMenu handleClick={onBottomMenuClick} />
       </Drawer>

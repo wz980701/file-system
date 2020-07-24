@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Link from '@material-ui/core/Link';
 import InputGroups from 'components/InputGroups/index';
 import { makeStyles } from '@material-ui/core';
+import useDocumentTitle from '../../hooks/useDocumentTitle';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -16,6 +17,9 @@ const useStyles = makeStyles((theme) => ({
 
 const Login = () => {
     const classes = useStyles();
+
+    useDocumentTitle('登录');
+
     return (
         <Grid container justify="center" alignItems="center" className={classes.root}>
             <Grid item xs={8}>

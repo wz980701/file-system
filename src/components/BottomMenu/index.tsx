@@ -33,7 +33,7 @@ const BottomMenu = ({ handleClick }: PropsInfo) => {
     const classes = useStyles();
     return (
         <Grid container className={classes.root}>
-            <Grid item xs={4}  style={{ backgroundColor: green[500] }} onClick={(e) => { handleClick(e, 'upload'); }} >
+            <Grid item xs={6}  style={{ backgroundColor: green[500] }} onClick={(e) => { handleClick(e, 'upload'); }} >
                 <Button className={classes.item} size="small">
                     <div>
                         <UploadIcon style={{ color: '#fff'}} fontSize="small" />
@@ -41,19 +41,11 @@ const BottomMenu = ({ handleClick }: PropsInfo) => {
                     </div>
                 </Button>
             </Grid>
-            <Grid item xs={4} style={{ backgroundColor: blue[500] }} onClick={(e) => { handleClick(e, 'collect'); }}>
+            <Grid item xs={6} style={{ backgroundColor: blue[500] }} onClick={(e) => { handleClick(e, 'collect'); }}>
                 <Button className={classes.item} size="small">
                     <div>
                         <CollectionIcon style={{ color: '#fff' }} fontSize="small" />
                         <p className={classes.text}>查看收藏文件</p>
-                    </div>
-                </Button>
-            </Grid>
-            <Grid item xs={4} style={{ backgroundColor: orange[500] }} onClick={(e) => { handleClick(e, 'add'); }}>
-                <Button className={classes.item} size="small">
-                    <div>
-                        <AddIcon style={{ color: '#fff' }} fontSize="small" />
-                        <p className={classes.text}>添加文件类型</p>
                     </div>
                 </Button>
             </Grid>

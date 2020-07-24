@@ -9,7 +9,8 @@ class CommonWindow extends BrowserWindow {
                 nodeIntegration: true,
                 webSecurity: false
             },
-            show: false
+            show: false,
+            autoHideMenuBar: true
         }
         const finalConfig = { ...basicConfig, ...config }
         super(finalConfig);
