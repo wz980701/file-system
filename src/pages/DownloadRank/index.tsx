@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import useDocumentTitle from '../../hooks/useDocumentTitle';
 import echarts from 'echarts';
 import api from 'helpers/api';
@@ -20,9 +20,9 @@ const DownloadRank = () => {
                 xAxis: {
                     data: list.map((item: any) => (item.fileName)),
                     axisLabel: {
-                        formatter: function(value: string) {
+                        formatter: function (value: string) {
                             var res = value;
-                            if(res.length > 10) {
+                            if (res.length > 10) {
                                 res = res.substring(0, 9) + "..";
                             }
                             return res;
@@ -41,7 +41,7 @@ const DownloadRank = () => {
         });
     }, []);
     return (
-        <div id="main" style={{width: '100%', height: '100%'}}></div>
+        <div id="main" style={{ width: '100%', height: '100%' }}></div>
     )
 }
 

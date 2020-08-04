@@ -1,4 +1,6 @@
-import React, {useEffect, useState, MouseEvent} from 'react';
+import React, { useEffect, useState, MouseEvent } from 'react';
+import path from 'path';
+import fs from 'fs';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -127,9 +129,9 @@ export default function PersistentDrawerLeft() {
   const [toggleList, setToggleList] = useState<any[]>([]);
   const [fileInfo, setFileInfo] = useState<any>({});
   const [dialogInfo, setDialogInfo] = useState<object>({
-      open: false,
-      text: '',
-      type: '' 
+    open: false,
+    text: '',
+    type: ''
   });
 
   useDocumentTitle('主页');
@@ -226,7 +228,7 @@ export default function PersistentDrawerLeft() {
           }
         }).then((res) => {
           const fileList = res.fileUserViewList ? res.fileUserViewList : [];
-          list[index] = {...item, fileList};
+          list[index] = { ...item, fileList };
         }).catch((err) => {
           console.log(err);
           setDialogInfo({
@@ -274,31 +276,31 @@ export default function PersistentDrawerLeft() {
   }
 
   const getFileInfo = (fileId: number) => {
-      const fileInfo = api.getFileInfo({
-          params: {
-              fileId
-          }
+    const fileInfo = api.getFileInfo({
+      params: {
+        fileId
+      }
+    });
+    const commentList = getCommentList(fileId);
+    Promise.all([fileInfo, commentList]).then((res) => {
+      setFileInfo({ ...res[0], commentList: res[1] });
+    }).catch(err => {
+      console.log(err);
+      setDialogInfo({
+        open: true,
+        text: '获取文件信息失败',
+        type: 'error'
       });
-      const commentList = getCommentList(fileId);
-      Promise.all([fileInfo, commentList]).then((res) => {
-        setFileInfo({...res[0], commentList: res[1]});
-      }).catch(err => {
-        console.log(err);
-        setDialogInfo({
-          open: true,
-          text: '获取文件信息失败',
-          type: 'error'
-        });
-      });
+    });
   }
 
   const getCommentList = (fileId: number) => {
     return api.selectFileCommentList({
-        params: {
-          fileId,
-          page: 1,
-          limit: 100
-        }
+      params: {
+        fileId,
+        page: 1,
+        limit: 100
+      }
     }).then(res => {
       return typeof res === 'object' ? res.fileUserCommentViewList : [];
     }).catch(err => {
@@ -331,6 +333,8 @@ export default function PersistentDrawerLeft() {
       case 'delComment':
         delComment(val); // 删除评论
         break;
+      case 'download': // 文件下载
+        downloadFile(val);
       default:
         return;
     }
@@ -407,8 +411,8 @@ export default function PersistentDrawerLeft() {
   const sendComment = (commentContent: string) => {
     api.addFileComment({
       data: getFormdata({
-          fileId: fileInfo.fileId,
-          commentContent
+        fileId: fileInfo.fileId,
+        commentContent
       })
     }).then(res => {
       getFileInfo(fileInfo.fileId);
@@ -439,6 +443,35 @@ export default function PersistentDrawerLeft() {
     })
   }
 
+  const downloadFile = (fileId: number) => {
+    api.downloadFile({
+      params: {
+        fileId
+      },
+      responseType: 'blob'
+    }).then((res:any) => {
+      const { data, headers } = res;
+      const fileName = window.decodeURI(headers['content-disposition'].split('=')[1]);
+      const blob = new Blob([data], {type: headers['content-type']});
+      let url = window.URL.createObjectURL(blob);
+      let link = document.createElement('a');
+      link.href = url;
+      link.download = fileName.split('"')[1];
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      window.URL.revokeObjectURL(link.href);
+      document.body.removeChild(link);
+    }).catch(err => {
+      console.log(err);
+      setDialogInfo({
+        open: true,
+        text: '下载失败',
+        type: 'error'
+      });
+    })
+  }
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -459,7 +492,7 @@ export default function PersistentDrawerLeft() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            { isObjEmpty(fileInfo) ? 'File System' : fileInfo.fileName }
+            {isObjEmpty(fileInfo) ? 'File System' : fileInfo.fileName}
           </Typography>
         </Toolbar>
       </AppBar>
@@ -490,8 +523,8 @@ export default function PersistentDrawerLeft() {
         </div>
         {
           toggle ? <ToggleList list={toggleList} handleItemClick={getFileInfo} /> :
-            <NavSideList 
-              list={catalogList} 
+            <NavSideList
+              list={catalogList}
               handleItemClick={getFileInfo}
             />
         }
@@ -503,11 +536,11 @@ export default function PersistentDrawerLeft() {
         })}
       >
         {
-          isObjEmpty(fileInfo) ? <h1 className={classes.contentHeader}>Welcome to Jeremy's</h1> : 
+          isObjEmpty(fileInfo) ? <h1 className={classes.contentHeader}>Welcome to Jeremy's</h1> :
             <MainContent fileInfo={fileInfo} onContentEvent={handleContentEvent} />
         }
       </main>
-      <Toast dialogInfo={dialogInfo} handleClose={ () => { setDialogInfo({...dialogInfo, open: false}) } } />
+      <Toast dialogInfo={dialogInfo} handleClose={() => { setDialogInfo({ ...dialogInfo, open: false }) }} />
     </div>
   );
 }

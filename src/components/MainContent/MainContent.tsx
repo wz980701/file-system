@@ -113,17 +113,17 @@ const MainContent = ({ fileInfo, onContentEvent }: PropsInfo) => {
                         <p className={classes.userName}>{fileInfo.userName}</p>
                     </div>
                     <div className={classes.buttonGroups}>
-                        <Button 
-                            style={{ color: fileInfo.fileCollectionId ? pink[500] : grey[500] }} 
+                        <Button
+                            style={{ color: fileInfo.fileCollectionId ? pink[500] : grey[500] }}
                             size="small"
-                            onClick={e => {fileInfo.fileCollectionId ? onContentEvent('cancelCollect', fileInfo.fileCollectionId) : onContentEvent('collect', fileInfo.fileId)}}
+                            onClick={e => { fileInfo.fileCollectionId ? onContentEvent('cancelCollect', fileInfo.fileCollectionId) : onContentEvent('collect', fileInfo.fileId) }}
                         >
-                            { fileInfo.fileCollectionId ? '已收藏' : '未收藏'}
+                            {fileInfo.fileCollectionId ? '已收藏' : '未收藏'}
                         </Button>
-                        <Button 
-                            style={{ color: fileInfo.fileLikeId ? orange[300] : grey[500] }} 
+                        <Button
+                            style={{ color: fileInfo.fileLikeId ? orange[300] : grey[500] }}
                             size="small"
-                            onClick={e => {fileInfo.fileLikeId ? onContentEvent('cancelLike', fileInfo.fileLikeId) : onContentEvent('like', fileInfo.fileId)}}
+                            onClick={e => { fileInfo.fileLikeId ? onContentEvent('cancelLike', fileInfo.fileLikeId) : onContentEvent('like', fileInfo.fileId) }}
                         >
                             点赞{fileInfo.likeAmount}
                         </Button>
@@ -134,20 +134,21 @@ const MainContent = ({ fileInfo, onContentEvent }: PropsInfo) => {
                         style={{ color: '#fff', backgroundColor: green[500] }}
                         className={classes.downloadBtn}
                         startIcon={<DownloadIcon />}
+                        onClick={e => { onContentEvent('download', fileInfo.fileId) }}
                     >
                         D O W N L O A D
                     </Button>
                 </Grid>
                 <Grid item className={classes.commentBox} xs={12}>
-                    <p style={{textAlign: 'left'}}>评论</p>
+                    <p style={{ textAlign: 'left' }}>评论</p>
                     <div className={classes.inputBox}>
                         <TextField
                             label="对该文件评论几句吧"
                             multiline
                             rowsMax={4}
                             value={commentText}
-                            style={{flex: 1}}
-                            onChange={(e) => {setCommentText(e.target.value)}}
+                            style={{ flex: 1 }}
+                            onChange={(e) => { setCommentText(e.target.value) }}
                         />
                         <Button
                             size="small"
@@ -156,26 +157,26 @@ const MainContent = ({ fileInfo, onContentEvent }: PropsInfo) => {
                         >
                             发布
                         </Button>
-                    </div>  
+                    </div>
                     <div className={classes.commentText}>
-                        <p style={{textAlign: 'left'}}>共{fileInfo.commentAmount}条</p>
+                        <p style={{ textAlign: 'left' }}>共{fileInfo.commentAmount}条</p>
                         <div className={classes.commentList}>
                             {
                                 fileInfo.commentList.map((commentItem: any, commentIndex: number) => (
                                     <div className={classes.commentItem}>
                                         <Avatar src={fileBaseURL + commentItem.userPortrait} variant="rounded" className={classes.avatar} />
                                         <div>
-                                            <p style={{color: blue[300]}}>{commentItem.userName}</p>
+                                            <p style={{ color: blue[300] }}>{commentItem.userName}</p>
                                             <p>{commentItem.commentContent}</p>
-                                            <p style={{color: grey[400]}}>{timestampToTime(commentItem.commentTime)}</p>
+                                            <p style={{ color: grey[400] }}>{timestampToTime(commentItem.commentTime)}</p>
                                         </div>
                                         {
                                             judgeUser(commentItem.userName) && (
                                                 <Button
                                                     color="primary"
                                                     size="small"
-                                                    style={{position: 'absolute', right: 0, bottom: 0}}
-                                                    onClick={e => {onContentEvent('delComment', commentItem.fileCommentId)}}
+                                                    style={{ position: 'absolute', right: 0, bottom: 0 }}
+                                                    onClick={e => { onContentEvent('delComment', commentItem.fileCommentId) }}
                                                 >删除</Button>
                                             )
                                         }
@@ -188,6 +189,6 @@ const MainContent = ({ fileInfo, onContentEvent }: PropsInfo) => {
             </Grid>
         </Container>
     )
-} 
+}
 
 export default MainContent;

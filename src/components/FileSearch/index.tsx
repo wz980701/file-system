@@ -1,6 +1,5 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
-import TextField from '@material-ui/core/TextField';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, TextField } from '@material-ui/core';
 import useKeyEnter from '../../hooks/useKeyEnter';
 
 const useStyles = makeStyles((theme) => ({

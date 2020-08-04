@@ -6,20 +6,20 @@ import menuTemplate from './menuTemplate';
 
 let mainWindow: Electron.BrowserWindow | null;
 let rankWindow: Electron.BrowserWindow | null;
+let settingWindow: Electron.BrowserWindow | null;
 
 function createWindow() {
   if (process.env.NODE_ENV === 'development') {
     mainWindow = new CommonWindow('/login', { width: 800, height: 600 });
-    // mainWindow = new CommonWindow('/');
   } else {
     mainWindow = new CommonWindow(url.format({
-        pathname: path.join(__dirname, '../index.html'),
-        protocol: 'file:',
-        slashes: true
+      pathname: path.join(__dirname, '../index.html'),
+      protocol: 'file:',
+      slashes: true
     }));
   }
-  
-  mainWindow.on('closed', () => {
+
+  mainWindow.on('close', () => {
     mainWindow = null;
   });
 
@@ -36,11 +36,28 @@ function createWindow() {
       height: 700,
       parent: mainWindow
     }
-    rankWindow = new CommonWindow(`/${arg}Rank`, config);
-    rankWindow.on('closed', () => {
+    rankWindow = new CommonWindow(`/${arg}Rank?config=true`, config);
+    rankWindow.on('close', () => {
       rankWindow = null;
     });
   });
+
+  ipcMain.on('open-setting', () => { // 打开设置窗口
+    const config = {
+      width: 600,
+      height: 400,
+      parent: mainWindow
+    }
+    settingWindow = new CommonWindow('/setting', config);
+    settingWindow.on('close', () => {
+      settingWindow = null;
+    });
+  });
+
+  ipcMain.on('logout', () => { // 退出登录
+    (<Electron.BrowserWindow>mainWindow).close();
+    mainWindow = new CommonWindow('/login', { width: 800, height: 600 });
+  })
 
   let menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);

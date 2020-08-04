@@ -1,8 +1,6 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import Link from '@material-ui/core/Link';
 import InputGroups from 'components/InputGroups/index';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Grid, Link } from '@material-ui/core';
 import useDocumentTitle from '../../hooks/useDocumentTitle';
 
 const useStyles = makeStyles((theme) => ({

@@ -1,9 +1,6 @@
 import React from 'react';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import FileIcon from '@material-ui/icons/FileCopyOutlined';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, ListItemText, ListItem, ListItemIcon } from '@material-ui/core';
 // import ListIcons from 'components/ListIcons/index';
 
 const useStyles = makeStyles((theme) => ({

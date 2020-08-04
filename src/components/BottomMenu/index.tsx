@@ -1,11 +1,8 @@
 import React, { MouseEvent } from 'react';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
 import UploadIcon from '@material-ui/icons/BackUp';
 import CollectionIcon from '@material-ui/icons/Collections';
-import AddIcon from '@material-ui/icons/Add';
-import { green, blue, orange } from '@material-ui/core/colors';
-import { makeStyles } from '@material-ui/core/styles';
+import { green, blue } from '@material-ui/core/colors';
+import { makeStyles, Grid, Button } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
     root: {

@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Grid, Button, TextField } from '@material-ui/core';
 import api from 'helpers/api';
 import { getFormdata } from 'helpers/fun';
 import { ipcRenderer } from 'electron';
@@ -64,8 +61,8 @@ const InputGroups = ({ type }: propInfo) => {
 
     const getLogin = () => {
         const formdata = getFormdata({
-            'userName': username,
-            'userPassword': password
+            userName: username,
+            userPassword: password
         });
         api.userLogin({
             data: formdata

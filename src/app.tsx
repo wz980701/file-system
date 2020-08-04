@@ -7,6 +7,7 @@ import Login from './pages/Login/index';
 import Regist from './pages/Regist/index';
 import DownloadRank from './pages/DownloadRank/index';
 import HotRank from './pages/HotRank/index';
+import Setting from './pages/Setting/index';
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="/regist" component={Regist} />
         <Route path="/downloadRank" component={DownloadRank} />
         <Route path="/hotRank" component={HotRank} />
+        <Route path="/setting" component={Setting} />
       </Switch>
     </Router>
   )

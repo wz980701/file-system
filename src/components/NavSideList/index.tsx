@@ -1,13 +1,9 @@
 import React, { useState, MouseEvent, useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
-import { makeStyles, Collapse } from '@material-ui/core';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
+import { makeStyles, Collapse, List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import ListIcon from '@material-ui/icons/ListOutlined';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import ExpandLess from '@material-ui/icons/ExpandLess';
-import ListItemText from '@material-ui/core/ListItemText';
-import List from '@material-ui/core/List';
 import Item from 'components/Item/index';
 
 interface PropsInfo {

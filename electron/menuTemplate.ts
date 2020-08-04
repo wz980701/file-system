@@ -1,29 +1,30 @@
-const { app, shell, ipcMain } = require('electron')
+import { app, shell, ipcMain } from 'electron';
+import api from '../helpers/api';
 
-let template:any = [{
+let template: any = [{
     label: '文件',
     submenu: [{
         label: '新建',
         accelerator: 'CmdOrCtrl+N',
-        click: (menuItem:any, browserWindow:any, event:any) => {
+        click: (menuItem: any, browserWindow: any, event: any) => {
             browserWindow.webContents.send('create-new-file')
         }
     }, {
         label: '保存',
         accelerator: 'CmdOrCtrl+S',
-        click: (menuItem:any, browserWindow:any, event:any) => {
+        click: (menuItem: any, browserWindow: any, event: any) => {
             browserWindow.webContents.send('save-edit-file')
         }
     }, {
         label: '搜索',
         accelerator: 'CmdOrCtrl+F',
-        click: (menuItem:any, browserWindow:any, event:any) => {
+        click: (menuItem: any, browserWindow: any, event: any) => {
             browserWindow.webContents.send('search-file')
         }
     }, {
         label: '导入',
         accelerator: 'CmdOrCtrl+O',
-        click: (menuItem:any, browserWindow:any, event:any) => {
+        click: (menuItem: any, browserWindow: any, event: any) => {
             browserWindow.webContents.send('import-file')
         }
     }]
@@ -61,17 +62,17 @@ let template:any = [{
     ]
 },
 {
-    label:'排行榜',
-    submenu:[
+    label: '排行榜',
+    submenu: [
         {
-            label:'下载排行榜',
+            label: '下载排行榜',
             click: () => {
                 ipcMain.emit('open-rank', 'download');
             }
         },
         {
-            label:'热度排行榜',
-            click:() => {
+            label: '热度排行榜',
+            click: () => {
                 ipcMain.emit('open-rank', 'hot');
             }
         }
@@ -79,24 +80,9 @@ let template:any = [{
 },
 {
     label: '设置',
-    submenu: [
-        {
-            label: '修改密码',
-            click: () => {}
-        },
-        {
-            label: '修改头像',
-            click: () => {}
-        },
-        {
-            label: '设置下载路径',
-            click: () => {}
-        },
-        {
-            label: '退出登录',
-            click: () => {}
-        },
-    ]
+    click: () => {
+        ipcMain.emit('open-setting');
+    }
 },
 {
     label: '视图',
@@ -104,7 +90,7 @@ let template:any = [{
         {
             label: '刷新当前页面',
             accelerator: 'CmdOrCtrl+R',
-            click: (item:any, focusedWindow:any) => {
+            click: (item: any, focusedWindow: any) => {
                 if (focusedWindow)
                     focusedWindow.reload();
             }
@@ -117,7 +103,7 @@ let template:any = [{
                 else
                     return 'F11';
             })(),
-            click: (item:any, focusedWindow:any) => {
+            click: (item: any, focusedWindow: any) => {
                 if (focusedWindow)
                     focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
             }
@@ -130,7 +116,7 @@ let template:any = [{
                 else
                     return 'Ctrl+Shift+I';
             })(),
-            click: (item:any, focusedWindow:any) => {
+            click: (item: any, focusedWindow: any) => {
                 if (focusedWindow)
                     focusedWindow.toggleDevTools();
             }
@@ -159,6 +145,12 @@ let template:any = [{
             click: () => { shell.openExternal('http://electron.atom.io') }
         },
     ]
+},
+{
+    label: '退出登录',
+    click: () => {
+        ipcMain.emit('logout');
+    }
 }
 ]
 
