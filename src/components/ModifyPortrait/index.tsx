@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { makeStyles, Button, Avatar } from '@material-ui/core';
 import { getFormdata } from 'helpers/fun';
 import api from 'helpers/api';
+import SelectFile from 'components/SelectFile/index';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -56,20 +57,7 @@ const ModifyPortrait = ({ onShow }: propInfo) => {
                         上传
                     </Button>
                 ) : (
-                    <>
-                        <input
-                            style={{ display: 'none' }}
-                            onChange={getUploadImgInfo}
-                            id="raised-button-file"
-                            multiple
-                            type="file"
-                        />
-                        <label htmlFor="raised-button-file">
-                            <Button component="span">
-                                选择图片
-                            </Button>
-                        </label>
-                    </> 
+                    <SelectFile id="portrait-btn" onSelect={getUploadImgInfo} btnText="选择图片" />
                 )
             }
         </div>

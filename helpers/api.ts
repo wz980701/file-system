@@ -37,9 +37,6 @@ class API extends Axios {
     async uploadFile(params = {}) {
         return this.post('/user/file/uploadFile', params, '上传文件失败');
     }
-    async deleteFile(params = {}) {
-        return this.post('/user/file/deleteFile', params, '删除文件失败');
-    }
     async getUserFileList(params = {}) {
         return this.get('/user/file/getUserFileList', params, '获取上传文件失败');
     }

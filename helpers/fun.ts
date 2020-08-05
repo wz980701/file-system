@@ -26,3 +26,14 @@ export const timestampToTime = (timestamp: number): string => {
     var s = date.getSeconds();
     return Y + M + D + h+ m + s;
 }
+
+export const getParentNode = (node: HTMLElement | null, parentClassName: string) => {
+    let current:any = node;
+    while (current !== null) {
+        if (current.classList.contains(parentClassName)) {
+            return current;
+        }
+        current = current.parentNode;
+    }
+    return false;
+}

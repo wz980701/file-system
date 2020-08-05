@@ -1,6 +1,4 @@
 import React, { useEffect, useState, MouseEvent } from 'react';
-import path from 'path';
-import fs from 'fs';
 import clsx from 'clsx';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
@@ -448,7 +446,10 @@ export default function PersistentDrawerLeft() {
       params: {
         fileId
       },
-      responseType: 'blob'
+      responseType: 'blob',
+      onDownloadProgress (progress:any) {
+        console.log(progress);
+      }
     }).then((res:any) => {
       const { data, headers } = res;
       const fileName = window.decodeURI(headers['content-disposition'].split('=')[1]);

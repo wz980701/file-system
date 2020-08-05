@@ -5,6 +5,9 @@ import ListIcon from '@material-ui/icons/ListOutlined';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import Item from 'components/Item/index';
+import useContextMenu from '../../hooks/useContextMenu';
+import { getParentNode } from 'helpers/fun';
+import UploadDialog from 'components/UploadDialog/index';
 
 interface PropsInfo {
     list: FileCatalog[],
@@ -30,6 +33,21 @@ const NavSideList = ({ list, handleItemClick }: PropsInfo) => {
 
     const openList: any[] = Array.from({length: list.length}).fill(false);
     const [opens, setOpens] = useState<Array<boolean>>(openList);
+    const [openDialog, setOpenDialog] = useState<boolean>(false);
+    const [currentId, setCurrentId] = useState<number>(0);
+
+    const clickedItem = useContextMenu([
+        {
+            label: '上传',
+            click: () => {
+                const parentElement = getParentNode(clickedItem.current, 'catalogItem');
+                if (parentElement) {
+                    setCurrentId(parentElement.dataset.id);
+                    setOpenDialog(true);
+                }
+            }
+        }
+    ], '.catalogList', [list]);
 
     const handleClick = (e: MouseEvent<HTMLDivElement>, index: number) => {
         const arr = [...opens];
@@ -40,11 +58,17 @@ const NavSideList = ({ list, handleItemClick }: PropsInfo) => {
     return (
         <Grid container className={classes.root}>
             <Grid xs={12} item>
-                <List>
+                <List className="catalogList">
                     {
                         list.map((catalogItem, catalogIndex) => (
                             <>
-                                <ListItem button key={catalogIndex} onClick={(e) => { handleClick(e, catalogIndex); }}>
+                                <ListItem
+                                className="catalogItem" 
+                                button 
+                                key={catalogIndex}
+                                data-id={catalogItem.fileCatalogId}
+                                onClick={(e) => { handleClick(e, catalogIndex); }}
+                                >
                                     <ListItemIcon>
                                         <ListIcon fontSize="small" />
                                     </ListItemIcon>
@@ -62,6 +86,7 @@ const NavSideList = ({ list, handleItemClick }: PropsInfo) => {
                         ))
                     }
                 </List>
+                <UploadDialog open={openDialog} onClose={() => {setOpenDialog(false)}} id={currentId} />
             </Grid>
         </Grid>
     )
