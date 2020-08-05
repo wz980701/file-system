@@ -1,4 +1,4 @@
-## Electron app.
+## File System
 ### Basic setup with React, Typescript and Webpack.
 
 To run this project.
@@ -6,7 +6,7 @@ To run this project.
 - Clone this repo
 
 ```bash
-  git clone https://github.com/elisealcala/electron-react-ts.git
+  git clone https://github.com/wz980701/file-system.git
 ```
 
 - Install the dependencies
